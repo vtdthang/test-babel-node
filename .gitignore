@@ -103,12 +103,6 @@ Desktop.ini
 .directory
 *~
 
-# npm
-package-lock.json
-*.log
-*.gz
-
-
 # Coveralls
 coverage
 
