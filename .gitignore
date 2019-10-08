@@ -108,3 +108,9 @@ coverage
 
 # Benchmarking
 benchmarks/graphs
+
+# Build
+build/
+
+#Logs
+src/log/
