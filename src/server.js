@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import bodyParser from 'body-parser';
 import path from 'path';
@@ -6,6 +7,7 @@ import rfs from 'rotating-file-stream';
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
+import nodemailer from 'nodemailer';
  
 const app = express();
 
@@ -72,8 +74,40 @@ const getAuthorizationToken = async (code) => {
     return JSON.parse(body.data);
 };
 
-app.get('/', function (req, res) {
-  res.status(200).send('hello, world!')
+app.get('/nodemailer', function (req, res) {
+    try {
+        nodemailer.createTestAccount((err, account) => {
+            let transporter = nodemailer.createTransport({
+                host: 'smtp.googlemail.com', // Gmail Host
+                port: 465, // Port
+                secure: true, // this is true as port is 465
+                //service: 'gmail',
+                auth: {
+                    user: process.env.GMAIL_USERNAME, //Gmail username
+                    pass: process.env.GMAIL_PASSWORD // Gmail password
+                }
+            });
+         
+            let mailOptions = {
+                from: '"Kazan Matsuri" <donotreply@tourdeeapp.com>',
+                to: 'thang.vo@taplifetechnology.com', // Recepient email address. Multiple emails can send separated by commas
+                subject: 'Welcome Email',
+                text: 'This is the email sent through Gmail SMTP Server.',
+                html: "<b>Hello world?</b>" // html body
+            };
+         
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+                console.log('Message sent: %s', info.messageId);
+            });
+        });
+    } catch(error) {
+        console.log(error);
+    }
+    res.status(200).send('hello, world!')
 });
 
 app.post('/', function (req, res) {
