@@ -110,7 +110,7 @@ coverage
 benchmarks/graphs
 
 # Build
-build/
+build/**
 
 #Logs
 src/log/

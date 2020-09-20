@@ -8,12 +8,15 @@ import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import nodemailer from 'nodemailer';
+import os from 'os';
 import { assignId, morganLogger } from './middlewares/logger';
-
 import loggerWinston from './config/winston';
 
+const PORT = process.env.PORT || 3033;
+const name = process.env.NAME || 'FOOTBALL';
+
 const app = express();
-app.use(assignId)
+app.use(assignId);
 
 const logDirectory = path.join(__dirname, 'logs');
 // const stream = createStream(generator(new Date()), {
@@ -117,7 +120,7 @@ app.get('/nodemailer', function (req, res) {
     res.status(200).send('hello, world!')
 });
 
-app.post('/', function (req, res) {
+app.post('/test', function (req, res) {
     const test = req.body;
     console.log(test);
     res
@@ -132,6 +135,16 @@ app.get("/test", (req, res) => {
 
     res.status(404).send('Test error');
 })
+
+// Load balancing nginx
+app.get('/', (req, res) => {
+    res.send(`Hello ${name} !`)
+});
+
+// Docker Swarm
+app.get('/swarm', (req, res) => {
+    res.send(`<h3>It's ${os.hostname()}</h3>`);
+});
 
 // error handler
 app.use(function (err, req, res, next) {
@@ -148,7 +161,7 @@ app.use(function (err, req, res, next) {
 });
 
 //server is listening
-app.listen(5500, function () {
+app.listen(PORT, function () {
     console.log("Server started...");
 });
 
